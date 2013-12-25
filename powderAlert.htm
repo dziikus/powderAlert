@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Powder alert</title>
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" charset="utf-8"/>
+        <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+        <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        <script type="text/javascript" src="powderAlert.js"></script>
+        <link rel="stylesheet" type="text/css" href="powderAlert.css"/>
+    </head>
+    <body>
+        <div id="map-canvas"></div>
+        <div id="visualization"></div>
+        <div id="warunLegend"></div>
+        <div id="newReport">
+            <button class="powderbutton" id="button">Add new report</button>
+        </div>
+        <div id="dialog" title="Add new report">
+            <form>
+                <fieldset>
+                    <label for="mountains">Mountains</label>
+                    <select id="mountains" name="mountains" class="text ui-widget-content ui-corner-all"></select>
+                    <label for="trail">Trail</label>
+                    <input type="text" name="trail" id="trail" value="" class="text ui-widget-content ui-corner-all" />
+                    <label for="user">Nick</label>
+                    <input type="text" name="user" id="user" value="anonymous" class="text ui-widget-content ui-corner-all" />
+                    <label for="date">Date</label>
+                    <input type="text" name="date" id="datepicker" value="" class="text ui-widget-content ui-corner-all" />
+                    <label for="overall">Overall</label>
+                    <select id="overall" name="overall"  class="text ui-widget-content ui-corner-all"></select>
+                    <label for="depth">Snow depth</label>
+                    <input type="text" name="depth" id="depth" value="0" class="text ui-widget-content ui-corner-all" />
+                    <label for="snowtype">Snow type</label>
+                    <select id="snowtype" name="snowtype" class="text ui-widget-content ui-corner-all"></select>
+                    <label for="link">Link</label>
+                    <input type="text" name="link" id="link" value="" class="text ui-widget-content ui-corner-all" />
+                    <label for="desc">Description</label>
+                    <textarea name="desc" id="desc" rows="5" class="text ui-widget-content ui-corner-all" ></textarea>
+                </fieldset>
+            </form>
+        </div>
+    </body>
+</html>

@@ -63,17 +63,17 @@ function getConditions(mountains) {
 	var head = document.createElement('thead');
 	var headTr = document.createElement('tr');
 	var headTh = document.createElement('th');
-	var text = document.createTextNode("Data");
+	var text = document.createTextNode("Date");
 	headTh.appendChild(text);
 	headTr.appendChild(headTh);
    
 	headTh = document.createElement('th');
-	text = document.createTextNode("Warun");
+	text = document.createTextNode("Overall");
 	headTh.appendChild(text);
 	headTr.appendChild(headTh);
    
 	headTh = document.createElement('th');
-	text = document.createTextNode("Ziomek");
+	text = document.createTextNode("Nick");
 	headTh.appendChild(text);
 	headTr.appendChild(headTh);
 	head.appendChild(headTr);
@@ -150,7 +150,16 @@ $(document).ready(function() {
    $('#snowtype').append($('<option/>').val(i).text("crud"));
    $('#snowtype').append($('<option/>').val(i).text("groomed"));
    $('#snowtype').append($('<option/>').val(i).text("ice"));
+   $('#snowtype').append($('<option/>').val(i).text("artificial"));
    $('#snowtype').append($('<option/>').val(i).text("other"));
+                  
+                  
+   $('#avalancheRisk').append($('<option/>').val(i).text("5 Extreme"));
+   $('#avalancheRisk').append($('<option/>').val(i).text("4 High"));
+   $('#avalancheRisk').append($('<option/>').val(i).text("3 Considerable"));
+   $('#avalancheRisk').append($('<option/>').val(i).text("2 Moderate"));
+   $('#avalancheRisk').append($('<option/>').val(i).text("1 Low"));
+   $('#avalancheRisk').append($('<option/>').val(i).text("0 Not applicable"));
                   
    $('#datepicker').datepicker('setDate', new Date());
    $('button').on('click', function() {
@@ -164,8 +173,18 @@ $(document).ready(function() {
                             + '&user='
                             + user.value
                             + '&conditions='
-                            + warun.value
-                            + '&date=2013-09-12';
+                            + overall.value
+                            + '&date=2013-09-12'
+                            + '&comment='
+                            + desc.value
+                            + '&trail='
+                            + trail.value
+                            + '&snowDepth='
+                            + snowdepth.value
+                            + '&snowType='
+                            + snowtype.value
+                            + '&avalancheRisk='
+                            + avalancheRisk.value;
                             $.ajax({ //my ajax request
                                    url: insert,
                                    type: "POST",

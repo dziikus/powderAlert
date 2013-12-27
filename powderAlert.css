@@ -39,9 +39,7 @@
    #visualization {
         position:absolute;
         top:30px;
-        right:20px;
-        width: 400px;
-        height: 100%;
+        right:5px;
         spacing:1;
     }
    #newReport{

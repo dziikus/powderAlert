@@ -46,13 +46,14 @@ function getColor(conditions) {
 		return '#2B00BF';
 	else if (conditions == 5)
 		return '#D50600';
+   return '#00D299';
 }
 
 function getConditions(mountains) {
 	var d = new Date();
 	d.setDate(d.getDate() - 7);
 	var curr_date = d.getDate() - 7;
-	var resp = httpGet('http://www.goryidoliny.hostings.pl/powder/detailedConditions.php?mountains=' + mountains + '&date=1/1/2012');
+	var resp = httpGet('http://www.goryidoliny.hostings.pl/powder/detailedConditions.php?mountains=' + mountains);
    //	var resp = httpGet('https://www.googleapis.com/fusiontables/v1/query?sql=SELECT%20*%20FROM%201zn137hapjSbTyLLnB92wedOA8ehvookUF-dZlgE%20WHERE%20mountains=\''
    //			+ mountains
    //			+ '\'%20ORDER%20BY%20postDate%20DESC&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ');
@@ -104,7 +105,7 @@ function getConditions(mountains) {
 }
 function assignStyles(styles) {
 	//var json = { "response":[{ "mountains":"gorce","conditions":"3.0000"},{ "mountains":"tatry","conditions":"5.0000"}]}
-	var resp = httpGet('http://www.goryidoliny.hostings.pl/powder/getAVGconditions.php?date=1/1/2012');
+	var resp = httpGet('http://www.goryidoliny.hostings.pl/powder/getAVGconditions.php');
 	//var json;
    
    // httpGet('https://www.googleapis.com/fusiontables/v1/query?sql=SELECT%20mountains,MAXIMUM(Warun)%20FROM%201zn137hapjSbTyLLnB92wedOA8ehvookUF-dZlgE%20GROUP%20BY%20mountains%20ORDER%20BY%20postDate%20DESC&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ');
@@ -168,13 +169,15 @@ $(document).ready(function() {
                             modal : true,
                             buttons : {
                             "Add" : function() {
+                            var now = $.datepicker.formatDate('yy-mm-dd', new Date());
                             var insert = 'http://www.goryidoliny.hostings.pl/powder/insertReport.php?mountains='
                             + mountains.value
                             + '&user='
                             + user.value
                             + '&conditions='
                             + overall.value
-                            + '&date=2013-09-12'
+                            + '&date='
+                            + now
                             + '&comment='
                             + desc.value
                             + '&trail='

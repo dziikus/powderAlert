@@ -3,28 +3,49 @@
         padding: 0;
         height: 100%;
     }
+    .dialog { display: none; }
+    #titleBar {
+        position:relative;
+        top:0px;
+         height: 85%;
+         margin-left: auto;
+         margin-right: auto;
+        height: 50px;
+    }
+    #content {
+        position:relative;
+        top:0px;
+        width: 90%;
+        height: 85%;
+         margin-left: auto;
+         margin-right: auto;
+    }
+   #bottomBar {
+      position:relative;
+      top:0px;
+         height: 85%;
+         margin-left: auto;
+         margin-right: auto;
+      height: 5%;
+    }
  	#warunLegend{
- 	    float: left;
-	    position:fixed;
+ 	    position:absolute;
 	    bottom:30px;
 	    left:20px;
 	    width: 100px;
 	    height: 200px;
 	    spacing:1;
- 	}     
- 
-    #visualization {
-        float: right;
-        position:fixed;
+ 	}
+   #visualization {
+        position:absolute;
         top:30px;
         right:20px;
         width: 400px;
         height: 100%;
         spacing:1;
     }
-    #newReport{
-        float: left;
-        position:fixed;
+   #newReport{
+        position:absolute;
         top:10px;
         left:100px;
         width: 400px;

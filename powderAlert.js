@@ -11,7 +11,7 @@ function translateConditions(conditions) {
 	if (conditions == '0') {
 		return 'impossible';
 	} else if (conditions == '1') {
-		return 'bad';
+		return 'poor';
 	} else if (conditions == '2') {
 		return 'medium';
 	} else if (conditions == '3') {
@@ -30,23 +30,24 @@ function getMountains() {
 	return json.rows;
 }
 
+
 function getColor(conditions) {
+   //return 'green';
 	conditions = Math.round( conditions );
-	if (conditions == 0)
-		return '#00D299';
-	else if (conditions == 0)
-		return '#00C7CE';
-	else if (conditions == 1)
-		return '#0087CA';
+//	if (conditions == 0)
+//		return '#ffffff';
+//	else
+   if (conditions == 1)
+		return '#dfe3ee';
 	else if (conditions == 2)
-		return '#0049C6';
+		return '#AABBEE';
 	else if (conditions == 3)
-		return '#000DC2';
+		return '#556699';
 	else if (conditions == 4)
-		return '#2B00BF';
+		return '#223344';
 	else if (conditions == 5)
-		return '#D50600';
-   return '#00D299';
+		return '#112233';
+   return '#ffffff';
 }
 
 function getConditions(mountains) {
@@ -74,19 +75,28 @@ function getConditions(mountains) {
 	}
 	return table;
 }
-function assignStyles(styles) {
-	//var json = { "response":[{ "mountains":"gorce","conditions":"3.0000"},{ "mountains":"tatry","conditions":"5.0000"}]}
+function getAVGColorsMap() {
 	var resp = httpGet('http://www.goryidoliny.hostings.pl/powder/getAVGconditions.php');
-	//var json;
-   
-   // httpGet('https://www.googleapis.com/fusiontables/v1/query?sql=SELECT%20mountains,MAXIMUM(Warun)%20FROM%201zn137hapjSbTyLLnB92wedOA8ehvookUF-dZlgE%20GROUP%20BY%20mountains%20ORDER%20BY%20postDate%20DESC&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ');
-	var json = JSON.parse(resp);
-   
+   var colors = [];
+   var json = JSON.parse(resp);
 	for ( var i = 0; i < json.response.length; i++) {
 		var color = getColor(json.response[i].conditions);
 		var mountains = json.response[i].mountains;
-		styles.push({ where : "mountains='" + mountains + "'", polygonOptions : { fillColor : color } } );
+      colors[mountains]=color;
 	}
+   return colors;
+}
+
+function getAVGConditionsMap() {
+	var resp = httpGet('http://www.goryidoliny.hostings.pl/powder/getAVGconditions.php');
+   var colors = [];
+   var json = JSON.parse(resp);
+	for ( var i = 0; i < json.response.length; i++) {
+		var color = json.response[i].conditions;
+		var mountains = json.response[i].mountains;
+      colors[mountains]=color;
+	}
+   return colors;
 }
 
 function createWarunLegend() {
@@ -194,30 +204,48 @@ function initialize() {
 	};
 	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
    
-	layer = new google.maps.FusionTablesLayer({
-      query : {
-      select : 'geometry',
-      from : '1zdMS8pSrXcX7sw5QT4uzTSXo3fu7oP8II8n2QYw'
-      }
-      });
-	var mapStyles = new Array();
-	assignStyles(mapStyles);
-	layer.set('styles', mapStyles);
+   var colorsMap = getAVGColorsMap();
+   var resp = httpGet('http://www.goryidoliny.hostings.pl/powder/getMountains.php');
+   var json = JSON.parse(resp);
    
-	google.maps.event.addListener(layer, 'click', function(e) {
-                                 $('#visualization').empty();
-                                 var leftPanel = $('#visualization').append(getConditions(e.row['mountains'].value));
-//      var leftPanel = document.getElementById('visualization');
-//      while (leftPanel.childNodes.length >= 1) {
-//         leftPanel.removeChild(leftPanel.firstChild);
-//      }
-//      leftPanel.append(getConditions(e.row['mountains'].value));
-//      // Change the content of the InfoWindow
-      e.infoWindowHtml = e.row['mountains'].value;
+   var mountainRange;
+
+   
+   var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+   for ( var i = 0; i < json.response.length; i++) {
+      var numbers = json.response[i].kml.split(/[\s,]+/);
+      var triangleCoords = [];
+      for(var j = 0; j+3 < numbers.length; j+=3){
+         triangleCoords.push(new google.maps.LatLng(numbers[j+1], numbers[j]));
+      }
       
-   });
+      // Construct the polygon.
+      var m = json.response[i].mountains;
+      var color = colorsMap[m];
+      if(color == null)
+         color = '#ffffff';
+      color = '#556699';
+      var opacity = 2;
+      var condMap = getAVGConditionsMap();
+      if(condMap[m] != null)
+         opacity = 2*(condMap[m]+2);
+      mountainRange = new google.maps.Polygon({
+                                                paths: triangleCoords,
+                                                strokeColor: color,
+                                                strokeOpacity: 0.8,
+                                                strokeWeight: 0,
+                                                fillColor: color,
+                                                fillOpacity: opacity/10,
+                                                mountainsName: json.response[i].mountains
+                                                });
+      
+      mountainRange.setMap(map);
+      google.maps.event.addListener(mountainRange, 'click', function (event) {
+                                       $('#visualization').empty();
+                                       var leftPanel = $('#visualization').append(getConditions(this.mountainsName));
+                                    });
+   }
 	createWarunLegend();
-	layer.setMap(map);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);

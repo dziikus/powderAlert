@@ -9,12 +9,17 @@
 	$result=mysql_query($query) or die(mysql_error());;
 	
 	print "{ \"response\":[";
+   $firstRow = true;
 	while($row = mysql_fetch_array($result)){
+      if(!$firstRow){
+			print ",";
+		}
 		print "{ \"mountains\":\"";
 		print $row['mountains'];
 		print "\",\"kml\":\"";
 		print $row['kml'];
 		print "\"}";
+      $firstRow=false;
 	}
 	print "]}";
     mysql_close();

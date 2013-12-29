@@ -54,52 +54,23 @@ function getConditions(mountains) {
 	d.setDate(d.getDate() - 7);
 	var curr_date = d.getDate() - 7;
 	var resp = httpGet('http://www.goryidoliny.hostings.pl/powder/detailedConditions.php?mountains=' + mountains);
-   //	var resp = httpGet('https://www.googleapis.com/fusiontables/v1/query?sql=SELECT%20*%20FROM%201zn137hapjSbTyLLnB92wedOA8ehvookUF-dZlgE%20WHERE%20mountains=\''
-   //			+ mountains
-   //			+ '\'%20ORDER%20BY%20postDate%20DESC&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ');
 	var json = JSON.parse(resp);
    
-	var table = document.createElement('table');
-	table.className = "bordered";
-	var head = document.createElement('thead');
-	var headTr = document.createElement('tr');
-	var headTh = document.createElement('th');
-	var text = document.createTextNode("Date");
-	headTh.appendChild(text);
-	headTr.appendChild(headTh);
-   
-	headTh = document.createElement('th');
-	text = document.createTextNode("Overall");
-	headTh.appendChild(text);
-	headTr.appendChild(headTh);
-   
-	headTh = document.createElement('th');
-	text = document.createTextNode("Nick");
-	headTh.appendChild(text);
-	headTr.appendChild(headTh);
-	head.appendChild(headTr);
-	table.appendChild(head);
+   var table = $('<table></table>').addClass('bordered');
+	var head = $('<thead><tr><th>Date</th><th>Overall</th><th>Nick</th><th>Depth</th><th>Type</th><th>Trail</th><th>Aval</th><th>Description</th><tr></thead>');
+	table.append(head);
    
 	for ( var i = 0; i < json.response.length; i++) {
-		var tr = document.createElement('tr');
-      
-		var td1 = document.createElement('td');
-		var td2 = document.createElement('td');
-		var td3 = document.createElement('td');
-      
-		var text1 = document.createTextNode(json.response[i].date);
-		var text2 = document
-      .createTextNode(translateConditions(json.response[i].conditions));
-		var text3 = document.createTextNode(json.response[i].user);
-      
-		td1.appendChild(text1);
-		td2.appendChild(text2);
-		td3.appendChild(text3);
-		tr.appendChild(td1);
-		tr.appendChild(td2);
-		tr.appendChild(td3);
-      
-		table.appendChild(tr);
+      var tr = $('<tr></tr>');
+      tr.append($('<td></td>').append(document.createTextNode(json.response[i].date)));
+      tr.append($('<td></td>').append(document.createTextNode(translateConditions(json.response[i].conditions))));
+      tr.append($('<td></td>').append(document.createTextNode(json.response[i].user)));
+		tr.append($('<td></td>').append(document.createTextNode(json.response[i].snowDepth)));
+      tr.append($('<td></td>').append(document.createTextNode(json.response[i].snowType)));
+		tr.append($('<td></td>').append(document.createTextNode(json.response[i].trail)));
+      tr.append($('<td></td>').append(document.createTextNode(json.response[i].avalancheRisk)));
+      tr.append($('<td></td>').append(document.createTextNode(json.response[i].comment)));
+		table.append(tr);
 	}
 	return table;
 }
@@ -163,13 +134,17 @@ $(document).ready(function() {
    $('#avalancheRisk').append($('<option/>').val(i).text("0 Not applicable"));
                   
    $('#datepicker').datepicker('setDate', new Date());
+                  var pickerOpts = {
+                  dateFormat:"yy-mm-dd"
+                  };
+                  $("#datepicker").datepicker(pickerOpts);
    $('button').on('click', function() {
       $(function() {
         $("#dialog").dialog({
                             modal : true,
                             buttons : {
                             "Add" : function() {
-                            var now = $.datepicker.formatDate('yy-mm-dd', new Date());
+                            var now = $.datepicker.formatDate('yy-mm-dd', $('#datepicker').datepicker("getDate"));
                             var insert = 'http://www.goryidoliny.hostings.pl/powder/insertReport.php?mountains='
                             + mountains.value
                             + '&user='
@@ -207,6 +182,10 @@ $(document).ready(function() {
       });
    });
 
+$(function() {
+  $( document ).tooltip();
+  });
+
 function initialize() {
 	var mapOptions = {
 		zoom : 9,
@@ -226,12 +205,14 @@ function initialize() {
 	layer.set('styles', mapStyles);
    
 	google.maps.event.addListener(layer, 'click', function(e) {
-      var leftPanel = document.getElementById('visualization');
-      while (leftPanel.childNodes.length >= 1) {
-         leftPanel.removeChild(leftPanel.firstChild);
-      }
-      leftPanel.appendChild(getConditions(e.row['mountains'].value));
-      // Change the content of the InfoWindow
+                                 $('#visualization').empty();
+                                 var leftPanel = $('#visualization').append(getConditions(e.row['mountains'].value));
+//      var leftPanel = document.getElementById('visualization');
+//      while (leftPanel.childNodes.length >= 1) {
+//         leftPanel.removeChild(leftPanel.firstChild);
+//      }
+//      leftPanel.append(getConditions(e.row['mountains'].value));
+//      // Change the content of the InfoWindow
       e.infoWindowHtml = e.row['mountains'].value;
       
    });

@@ -23,6 +23,14 @@
 		print $row['date'];
 		print "\",\"comment\":\"";
 		print $row['comment'];
+      print "\",\"trail\":\"";
+		print $row['trail'];
+      print "\",\"snowDepth\":\"";
+		print $row['snowDepth'];
+      print "\",\"snowType\":\"";
+		print $row['snowType'];
+      print "\",\"avalancheRisk\":\"";
+		print $row['avalancheRisk'];
 		print "\"}";
 		$firstRow=false;
 	}

@@ -24,6 +24,38 @@ function translateConditions(conditions) {
 	return 'no data';
 }
 
+function translateAvalancheRisk(risk){
+   if (risk == '1') {
+		return '1 Low';
+	} else if (risk == '2') {
+		return '2 Moderate';
+	} else if (risk == '3') {
+		return '3 Considerable';
+	} else if (risk == '4') {
+		return '4 High';
+	} else if (risk == '5') {
+		return '5 Extreme';
+	}
+	return 'Not applicable';
+}
+
+function translateSnowType(type){
+	if (type == '0') {
+		return 'powder';
+	} else if (type == '1') {
+		return 'crud';
+	} else if (type == '2') {
+		return 'groomed';
+	} else if (type == '3') {
+		return 'ice';
+	} else if (type == '4') {
+		return 'artificial';
+	} else if (type == '5') {
+		return 'other';
+	}
+	return 'no data';
+}
+
 function getMountains() {
 	var resp = httpGet('https://www.googleapis.com/fusiontables/v1/query?sql=SELECT%20mountains%20FROM%201zdMS8pSrXcX7sw5QT4uzTSXo3fu7oP8II8n2QYw&key=AIzaSyAm9yWCV7JPCTHCJut8whOjARd7pwROFDQ');
 	var json = JSON.parse(resp);
@@ -71,11 +103,12 @@ function getConditions(mountains) {
       tr.append($('<td></td>').append(document.createTextNode(translateConditions(json.response[i].conditions))));
       tr.append($('<td></td>').append(document.createTextNode(json.response[i].user)));
 		tr.append($('<td></td>').append(document.createTextNode(json.response[i].snowDepth)));
-      tr.append($('<td></td>').append(document.createTextNode(json.response[i].snowType)));
+      tr.append($('<td></td>').append(document.createTextNode(translateSnowType(json.response[i].snowType))));
 		tr.append($('<td></td>').append(document.createTextNode(json.response[i].trail)));
-      tr.append($('<td></td>').append(document.createTextNode(json.response[i].avalancheRisk)));
+      tr.append($('<td></td>').append(document.createTextNode(translateAvalancheRisk(json.response[i].avalancheRisk))));
       tr.append($('<td></td>').append(document.createTextNode(json.response[i].comment)));
 		table.append(tr);
+                
 	}
 	return table;
 }
@@ -132,20 +165,12 @@ $(document).ready(function() {
    for(var i = 0; i <= 5; ++i){
                   $('#overall').append($('<option/>').val(i).text(translateConditions(i)));
    }
-   $('#snowtype').append($('<option/>').val(i).text("powder"));
-   $('#snowtype').append($('<option/>').val(i).text("crud"));
-   $('#snowtype').append($('<option/>').val(i).text("groomed"));
-   $('#snowtype').append($('<option/>').val(i).text("ice"));
-   $('#snowtype').append($('<option/>').val(i).text("artificial"));
-   $('#snowtype').append($('<option/>').val(i).text("other"));
-                  
-                  
-   $('#avalancheRisk').append($('<option/>').val(i).text("5 Extreme"));
-   $('#avalancheRisk').append($('<option/>').val(i).text("4 High"));
-   $('#avalancheRisk').append($('<option/>').val(i).text("3 Considerable"));
-   $('#avalancheRisk').append($('<option/>').val(i).text("2 Moderate"));
-   $('#avalancheRisk').append($('<option/>').val(i).text("1 Low"));
-   $('#avalancheRisk').append($('<option/>').val(i).text("0 Not applicable"));
+   for(var i = 0; i <= 6; ++i){
+      $('#snowtype').append($('<option/>').val(i).text(translateSnowType(i)));
+   }
+   for(var i = 0; i <= 6; ++i){
+      $('#avalancheRisk').append($('<option/>').val(i).text(translateAvalancheRisk(i)));
+   }
                   
    $('#datepicker').datepicker('setDate', new Date());
                   var pickerOpts = {

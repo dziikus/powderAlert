@@ -31,6 +31,10 @@ function getMountains() {
 }
 
 
+
+function getNoDataColor(){
+   return '#DBDDE1';
+}
 function getColor(conditions) {
    //return 'green';
 	conditions = Math.round( conditions );
@@ -38,16 +42,16 @@ function getColor(conditions) {
 //		return '#ffffff';
 //	else
    if (conditions == 1)
-		return '#dfe3ee';
+		return '#B4B9E0';
 	else if (conditions == 2)
-		return '#AABBEE';
+		return '#8E95DF';
 	else if (conditions == 3)
-		return '#556699';
+		return '#6771DF';
 	else if (conditions == 4)
-		return '#223344';
+		return '#414DDE';
 	else if (conditions == 5)
-		return '#112233';
-   return '#ffffff';
+		return '#1B2ADE';
+   return getNoDataColor();
 }
 
 function getConditions(mountains) {
@@ -223,19 +227,14 @@ function initialize() {
       var m = json.response[i].mountains;
       var color = colorsMap[m];
       if(color == null)
-         color = '#ffffff';
-      color = '#556699';
-      var opacity = 2;
-      var condMap = getAVGConditionsMap();
-      if(condMap[m] != null)
-         opacity = 2*(condMap[m]+2);
+         color = getNoDataColor();
       mountainRange = new google.maps.Polygon({
                                                 paths: triangleCoords,
                                                 strokeColor: color,
                                                 strokeOpacity: 0.8,
                                                 strokeWeight: 0,
                                                 fillColor: color,
-                                                fillOpacity: opacity/10,
+                                                fillOpacity: 0.8,
                                                 mountainsName: json.response[i].mountains
                                                 });
       

@@ -65,7 +65,7 @@ function getMountains() {
 
 
 function getNoDataColor(){
-   return '#DBDDE1';
+   return '#B1B1B4';
 }
 function getColor(conditions) {
    //return 'green';
@@ -74,15 +74,15 @@ function getColor(conditions) {
 //		return '#ffffff';
 //	else
    if (conditions == 1)
-		return '#B4B9E0';
+		return '#8D8DB6';
 	else if (conditions == 2)
-		return '#8E95DF';
+		return '#6A6AB6';
 	else if (conditions == 3)
-		return '#6771DF';
+		return '#4746BA';
 	else if (conditions == 4)
-		return '#414DDE';
+		return '#2423BC';
 	else if (conditions == 5)
-		return '#1B2ADE';
+		return '#0100BF';
    return getNoDataColor();
 }
 
@@ -93,6 +93,10 @@ function getConditions(mountains) {
 	var resp = httpGet('http://www.goryidoliny.hostings.pl/powder/detailedConditions.php?mountains=' + mountains);
 	var json = JSON.parse(resp);
    
+   var info = $('<div></div>');
+   var infoTitle = $('<table></table>').addClass('bordered');
+   infoTitle.append($('<thead><tr><th>Detailed reports for ' + mountains +'</th></tr></thead>'));
+   info.append(infoTitle);
    var table = $('<table></table>').addClass('bordered');
 	var head = $('<thead><tr><th>Date</th><th>Overall</th><th>Nick</th><th>Depth</th><th>Type</th><th>Trail</th><th>Aval</th><th>Description</th><tr></thead>');
 	table.append(head);
@@ -110,7 +114,8 @@ function getConditions(mountains) {
 		table.append(tr);
                 
 	}
-	return table;
+   info.append(table);
+	return info;
 }
 function getAVGColorsMap() {
 	var resp = httpGet('http://www.goryidoliny.hostings.pl/powder/getAVGconditions.php');
@@ -224,6 +229,23 @@ $(document).ready(function() {
 $(function() {
   $( document ).tooltip();
   });
+function attachPolygonInfoWindow(polygon, html)
+{
+   infoWindow = new google.maps.InfoWindow({
+                                                   content: html,
+                                                   });
+   google.maps.event.addListener(polygon, 'mouseover', function(e) {
+                                 var latLng = e.latLng;
+                                 this.setOptions({fillOpacity:1});
+                                 infoWindow.setPosition(latLng);
+                                 infoWindow.open(map, polygon);
+
+                                 });
+   google.maps.event.addListener(polygon, 'mouseout', function() {
+                                 this.setOptions({fillOpacity:0.8});
+                                 infoWindow.close();
+                                 });
+}
 
 function initialize() {
 	var mapOptions = {
@@ -260,8 +282,10 @@ function initialize() {
                                                 strokeWeight: 0,
                                                 fillColor: color,
                                                 fillOpacity: 0.8,
-                                                mountainsName: json.response[i].mountains
+                                                mountainsName: json.response[i].mountains,
+                                                title: json.response[i].mountains
                                                 });
+      attachPolygonInfoWindow(mountainRange, '<strong>Info about this area</strong>');//json.response[i].mountains);
       
       mountainRange.setMap(map);
       google.maps.event.addListener(mountainRange, 'click', function (event) {
